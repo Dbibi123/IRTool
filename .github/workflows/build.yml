@@ -22,10 +22,12 @@ jobs:
         with:
           packages: 'platforms;android-33 build-tools;33.0.0'
 
-      - name: Setup Gradle
+      - name: Setup Gradle with compatible version
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '7.6'   # 关键：固定 7.6，兼容 AGP 7.4.2
 
-      - name: Build debug APK (use gradle directly, skip wrapper)
+      - name: Build debug APK
         run: gradle assembleDebug
 
       - name: Upload APK artifact
