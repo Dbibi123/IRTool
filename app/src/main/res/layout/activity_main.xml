@@ -1,47 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#F5F5F5"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/btn_start_recv"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开始接收红外" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_stop_recv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="停止接收" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="8dp">
-
+        <!-- 标题 -->
         <TextView
-            android:id="@+id/tv_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="等待红外信号..."
-            android:textSize="14sp"
-            android:fontFamily="monospace"/>
-    </ScrollView>
+            android:text="📡 红外收发工具"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:paddingBottom="16dp"/>
 
-    <EditText
-        android:id="@+id/et_send_code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="发送码值: NEC,地址,命令  例: NEC,0x00FF,0x45"
-        android:inputType="text" />
+        <!-- ======== 发送卡片 ======== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            android:radius="12dp">
 
-    <Button
-        android:id="@+id/btn_send"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="发送红外码" />
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="#FFFFFF">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📤 发送码"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#1E88E5"
+                    android:paddingBottom="12dp"/>
+
+                <!-- 头码 + 码值 输入行 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="头码"
+                        android:textSize="15sp"
+                        android:textColor="#555555"
+                        android:paddingRight="8dp"/>
+
+                    <EditText
+                        android:id="@+id/et_head_code"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/input_bg"
+                        android:gravity="center"
+                        android:hint="0x4040"
+                        android:inputType="text"
+                        android:textSize="16sp"
+                        android:fontFamily="monospace"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="码值"
+                        android:textSize="15sp"
+                        android:textColor="#555555"
+                        android:paddingHorizontal="8dp"/>
+
+                    <EditText
+                        android:id="@+id/et_command"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/input_bg"
+                        android:gravity="center"
+                        android:hint="0x41"
+                        android:inputType="text"
+                        android:textSize="16sp"
+                        android:fontFamily="monospace"
+                        android:textColor="#000000"/>
+                </LinearLayout>
+
+                <!-- 自动显示区域 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="12dp">
+
+                    <TextView
+                        android:id="@+id/tv_complement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="互补码：0xBE (自动计算)"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:fontFamily="monospace"/>
+
+                    <TextView
+                        android:id="@+id/tv_full_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="完整码：0xBE414040"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:fontFamily="monospace"
+                        android:paddingTop="4dp"/>
+                </LinearLayout>
+
+                <!-- 发送按钮 -->
+                <Button
+                    android:id="@+id/btn_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:text="📤 发送红外码"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#1E88E5"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ======== 接收卡片 ======== -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:radius="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="#FFFFFF">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📥 接收解码"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#43A047"
+                    android:paddingBottom="12dp"/>
+
+                <!-- 接收控制按钮 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/btn_start_recv"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="▶ 开始接收"
+                        android:textSize="15sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#43A047"/>
+
+                    <Button
+                        android:id="@+id/btn_stop_recv"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="⏹ 停止"
+                        android:textSize="15sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#E53935"/>
+                </LinearLayout>
+
+                <!-- 接收结果显示区（深色背景 + 等宽字体） -->
+                <TextView
+                    android:id="@+id/tv_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:padding="12dp"
+                    android:background="#263238"
+                    android:text="等待红外信号..."
+                    android:textSize="14sp"
+                    android:textColor="#ECEFF1"
+                    android:fontFamily="monospace"
+                    android:lineSpacingExtra="4dp"
+                    android:minHeight="100dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>
