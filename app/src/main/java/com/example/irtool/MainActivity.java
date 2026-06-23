@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
     private EditText etHeadCode, etCommand;
     private TextView tvComplement, tvFullCode;
     private Button btnSend;
-    private Button[] btnPresets = new Button[5];
+    private Button[] btnPresets = new Button[6];          
     private TextView tvLog;
     private ConsumerIrManager irManager;
     private SharedPreferences prefs;
@@ -46,10 +46,20 @@ public class MainActivity extends Activity {
         btnPresets[2] = findViewById(R.id.btn_preset_2);
         btnPresets[3] = findViewById(R.id.btn_preset_3);
         btnPresets[4] = findViewById(R.id.btn_preset_4);
+        btnPresets[5] = findViewById(R.id.btn_preset_5);   
         tvLog = findViewById(R.id.tv_log);
 
         irManager = (ConsumerIrManager) getSystemService(CONSUMER_IR_SERVICE);
         prefs = getSharedPreferences("ir_presets", Context.MODE_PRIVATE);
+
+        // 顶部 info 图标点击
+        findViewById(R.id.tv_info).setOnClickListener(v -> {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("关于")
+                    .setMessage("此软件为测试红外码值遥控器 \n 不做其他使用 \n by:Ajin \n E-mail:zhongdajin@cultraview.com")
+                    .setPositiveButton("确定", null)
+                    .show();
+        });
 
         // 手动输入实时预览
         TextWatcher codeWatcher = new TextWatcher() {
@@ -62,21 +72,17 @@ public class MainActivity extends Activity {
 
         btnSend.setOnClickListener(v -> {
             int[] data = getCurrentCode();
-            if (data != null) {
-                sendNecCode(data[0], data[1]);
-            }
+            if (data != null) sendNecCode(data[0], data[1]);
         });
 
-        // 初始化预设按钮
-        for (int i = 0; i < 5; i++) {
+        // 初始化6个预设按钮
+        for (int i = 0; i < 6; i++) {
             final int index = i;
             Button btn = btnPresets[i];
-            // 从 SharedPreferences 读取名字和码值
             String name = prefs.getString("preset_name_" + index, "按键" + (index + 1));
             String code = prefs.getString("preset_code_" + index, "");
             updatePresetButton(index, name, code);
 
-            // 短按：发送预设码值（使用当前输入框的头码）
             btn.setOnClickListener(v -> {
                 String cmdHex = prefs.getString("preset_code_" + index, "");
                 if (cmdHex.isEmpty()) {
@@ -100,15 +106,13 @@ public class MainActivity extends Activity {
                 sendNecCode(head, command);
             });
 
-            // 长按：编辑名字和码值
             btn.setOnLongClickListener(v -> {
                 showPresetEditDialog(index);
-                return true; // 消费长按事件，不再触发 onClick
+                return true;
             });
         }
     }
 
-    /** 获取当前输入框的头码和码值，解析失败返回 null */
     private int[] getCurrentCode() {
         try {
             int head = parseHex(etHeadCode.getText().toString().trim());
@@ -124,16 +128,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** 解析十六进制字符串（支持 0x 前缀或无前缀） */
     private int parseHex(String s) throws NumberFormatException {
-        if (s.startsWith("0x") || s.startsWith("0X")) {
-            return Integer.decode(s);
-        } else {
-            return Integer.parseInt(s, 16);
-        }
+        if (s.startsWith("0x") || s.startsWith("0X")) return Integer.decode(s);
+        return Integer.parseInt(s, 16);
     }
 
-    /** 更新手动输入下方的互补码和完整码预览 */
     private void updatePreview() {
         try {
             int head = parseHex(etHeadCode.getText().toString());
@@ -146,7 +145,7 @@ public class MainActivity extends Activity {
             int reversedHead = ((head & 0xFF) << 8) | ((head >> 8) & 0xFF);
             int complement = (~command) & 0xFF;
             int fullCode = (complement << 24) | (command << 16) | (reversedHead & 0xFFFF);
-            tvComplement.setText(String.format("互补码：0x%02X (自动计算)", complement));
+            tvComplement.setText(String.format("互补码：0x%02X ", complement));
             tvFullCode.setText(String.format("完整码：0x%08X", fullCode));
         } catch (NumberFormatException e) {
             tvComplement.setText("互补码：--");
@@ -154,7 +153,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** NEC 协议发送 */
     private void sendNecCode(int head, int command) {
         if (irManager == null || !irManager.hasIrEmitter()) {
             Toast.makeText(this, "此设备不支持红外发射", Toast.LENGTH_LONG).show();
@@ -164,8 +162,8 @@ public class MainActivity extends Activity {
         int complement = (~command) & 0xFF;
 
         byte[] data = new byte[]{
-            (byte) (reversedHead & 0xFF),          // 地址低
-            (byte) ((reversedHead >> 8) & 0xFF),   // 地址高
+            (byte) (reversedHead & 0xFF),
+            (byte) ((reversedHead >> 8) & 0xFF),
             (byte) command,
             (byte) complement
         };
@@ -176,26 +174,20 @@ public class MainActivity extends Activity {
         int fullCode = (complement << 24) | (command << 16) | (reversedHead & 0xFFFF);
         String msg = String.format("已发送: 0x%08X", fullCode);
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-
-        // 记录日志
         appendLog(fullCode, head, command);
     }
 
-    /** 更新日志区并自动滚动 */
     private void appendLog(int fullCode, int head, int command) {
         String time = sdf.format(new Date());
         String line = String.format("%s  发送 0x%08X（头码:%04X 码值:%02X）\n",
                 time, fullCode, head, command);
         tvLog.append(line);
-        // 自动滚动到底部（日志区的 ScrollView）
         View parent = (View) tvLog.getParent();
         if (parent instanceof ScrollView) {
-            ScrollView logScroll = (ScrollView) parent;
-            logScroll.post(() -> logScroll.fullScroll(View.FOCUS_DOWN));
+            ((ScrollView) parent).post(() -> ((ScrollView) parent).fullScroll(View.FOCUS_DOWN));
         }
     }
 
-    /** 更新预设按钮文字 */
     private void updatePresetButton(int index, String name, String code) {
         Button btn = btnPresets[index];
         if (code == null || code.isEmpty()) {
@@ -205,12 +197,10 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** 显示长按编辑对话框（纯代码生成，无需 XML） */
     private void showPresetEditDialog(final int index) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("编辑按键 " + (index + 1));
 
-        // 动态创建布局
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(32, 16, 32, 16);
@@ -223,7 +213,7 @@ public class MainActivity extends Activity {
         final EditText etCode = new EditText(this);
         etCode.setHint("码值（十六进制，如：DB）");
         etCode.setText(prefs.getString("preset_code_" + index, ""));
-        etCode.setTypeface(etCommand.getTypeface()); // monospace
+        etCode.setTypeface(etCommand.getTypeface());
         LinearLayout.LayoutParams codeParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         codeParams.topMargin = 24;
@@ -231,7 +221,6 @@ public class MainActivity extends Activity {
         layout.addView(etCode);
 
         builder.setView(layout);
-
         builder.setPositiveButton("保存", (dialog, which) -> {
             String name = etName.getText().toString().trim();
             String code = etCode.getText().toString().trim();
