@@ -8,10 +8,13 @@ import android.hardware.ConsumerIrManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.SimpleDateFormat;
@@ -185,9 +188,9 @@ public class MainActivity extends Activity {
                 time, fullCode, head, command);
         tvLog.append(line);
         // 自动滚动到底部（日志区的 ScrollView）
-        ScrollView logScroll = findViewById(R.id.tv_log).getParent() instanceof ScrollView ?
-                (ScrollView) tvLog.getParent() : null;
-        if (logScroll != null) {
+        View parent = (View) tvLog.getParent();
+        if (parent instanceof ScrollView) {
+            ScrollView logScroll = (ScrollView) parent;
             logScroll.post(() -> logScroll.fullScroll(View.FOCUS_DOWN));
         }
     }
@@ -202,31 +205,40 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** 显示长按编辑对话框 */
+    /** 显示长按编辑对话框（纯代码生成，无需 XML） */
     private void showPresetEditDialog(final int index) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("编辑按键 " + (index + 1));
 
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_preset_edit, null);
-        final EditText etName = view.findViewById(R.id.et_preset_name);
-        final EditText etCode = view.findViewById(R.id.et_preset_code);
+        // 动态创建布局
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(32, 16, 32, 16);
 
-        String oldName = prefs.getString("preset_name_" + index, "");
-        String oldCode = prefs.getString("preset_code_" + index, "");
-        etName.setText(oldName.isEmpty() ? "按键" + (index + 1) : oldName);
-        etCode.setText(oldCode);
-        etCode.setHint("例: DB");
+        final EditText etName = new EditText(this);
+        etName.setHint("按键名称（如：电源）");
+        etName.setText(prefs.getString("preset_name_" + index, "按键" + (index + 1)));
+        layout.addView(etName);
 
-        builder.setView(view);
+        final EditText etCode = new EditText(this);
+        etCode.setHint("码值（十六进制，如：DB）");
+        etCode.setText(prefs.getString("preset_code_" + index, ""));
+        etCode.setTypeface(etCommand.getTypeface()); // monospace
+        LinearLayout.LayoutParams codeParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        codeParams.topMargin = 24;
+        etCode.setLayoutParams(codeParams);
+        layout.addView(etCode);
+
+        builder.setView(layout);
+
         builder.setPositiveButton("保存", (dialog, which) -> {
             String name = etName.getText().toString().trim();
             String code = etCode.getText().toString().trim();
             if (name.isEmpty()) name = "按键" + (index + 1);
-            // 允许码值为空（表示清除），但会提示
             if (code.isEmpty()) {
                 Toast.makeText(MainActivity.this, "码值留空，按键将不可用", Toast.LENGTH_SHORT).show();
             } else {
-                // 验证码值合法性
                 try {
                     int cmd = parseHex(code);
                     if (cmd < 0 || cmd > 0xFF) {
@@ -238,7 +250,6 @@ public class MainActivity extends Activity {
                     return;
                 }
             }
-            // 保存到 SharedPreferences
             prefs.edit().putString("preset_name_" + index, name)
                     .putString("preset_code_" + index, code)
                     .apply();
