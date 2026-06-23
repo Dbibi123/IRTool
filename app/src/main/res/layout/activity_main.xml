@@ -16,8 +16,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingTop="1dp"
-            android:paddingBottom="2dp">
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp">
             <!-- 左侧占位（保持标题居中） -->
             <View
                 android:layout_width="0dp"
@@ -40,9 +40,9 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:text="ⓘ"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textColor="#888888"
-                android:padding="8dp"/>
+                android:padding="4dp"/>
         </LinearLayout>
 
         <!-- ========== 手动发送卡片 ========== -->
