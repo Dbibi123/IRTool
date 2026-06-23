@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📡 红外码发送"
+            android:text="Cultraview NEC码值发射"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="#333333"
@@ -105,7 +105,7 @@
                         android:id="@+id/tv_complement"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="互补码：0xF1 (自动计算)"
+                        android:text="互补码：0xF1 "
                         android:textSize="14sp"
                         android:textColor="#666666"
                         android:fontFamily="monospace"/>
