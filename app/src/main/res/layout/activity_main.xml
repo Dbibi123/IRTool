@@ -10,6 +10,41 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- ========== 顶部标题栏 ========== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="12dp">
+
+            <!-- 左侧占位（保持标题居中） -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cultraview Remote"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+
+            <!-- 右侧 info 图标 -->
+            <TextView
+                android:id="@+id/tv_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="ⓘ"
+                android:textSize="22sp"
+                android:textColor="#888888"
+                android:padding="8dp"/>
+        </LinearLayout>
+
         <!-- ========== 手动发送卡片 ========== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -28,7 +63,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📤 手动发送"
+                    android:text="NEC遥控器码值"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="#1E88E5"
@@ -104,7 +139,7 @@
                         android:id="@+id/tv_full_code"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="完整码：0x24DBFB41"
+                        android:text="完整码值：0x24DBFB41"
                         android:textSize="14sp"
                         android:textColor="#666666"
                         android:fontFamily="monospace"
@@ -117,14 +152,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="12dp"
-                    android:text="📤 发送红外码"
+                    android:text="发送码值"
                     android:textSize="16sp"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="#1E88E5"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- ========== 快捷发送卡片 ========== -->
+        <!-- ========== 快捷发送卡片（6键） ========== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -142,13 +177,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⚡ 快捷发送（短按发送 / 长按编辑）"
+                    android:text="快捷发送（短按发送 / 长按编辑）"
                     android:textSize="16sp"
                     android:textColor="#FF6F00"
                     android:textStyle="bold"
                     android:paddingBottom="12dp"/>
 
-                <!-- 5 个按键用两行排列 -->
+                <!-- 6 个按键 2 行 3 列 -->
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -160,60 +195,72 @@
                     <Button
                         android:id="@+id/btn_preset_0"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="56dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
+                        android:background="@drawable/oval_button_bg"
                         android:text="未设置"
                         android:textSize="12sp"
-                        android:backgroundTint="#FFB74D"
                         android:textColor="#FFFFFF"
                         android:gravity="center"/>
 
                     <Button
                         android:id="@+id/btn_preset_1"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="56dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
+                        android:background="@drawable/oval_button_bg"
                         android:text="未设置"
                         android:textSize="12sp"
-                        android:backgroundTint="#FFB74D"
                         android:textColor="#FFFFFF"
                         android:gravity="center"/>
 
                     <Button
                         android:id="@+id/btn_preset_2"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="56dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
+                        android:background="@drawable/oval_button_bg"
                         android:text="未设置"
                         android:textSize="12sp"
-                        android:backgroundTint="#FFB74D"
                         android:textColor="#FFFFFF"
                         android:gravity="center"/>
 
                     <Button
                         android:id="@+id/btn_preset_3"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="56dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
+                        android:background="@drawable/oval_button_bg"
                         android:text="未设置"
                         android:textSize="12sp"
-                        android:backgroundTint="#FFB74D"
                         android:textColor="#FFFFFF"
                         android:gravity="center"/>
 
                     <Button
                         android:id="@+id/btn_preset_4"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="56dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
+                        android:background="@drawable/oval_button_bg"
                         android:text="未设置"
                         android:textSize="12sp"
-                        android:backgroundTint="#FFB74D"
+                        android:textColor="#FFFFFF"
+                        android:gravity="center"/>
+
+                    <Button
+                        android:id="@+id/btn_preset_5"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/oval_button_bg"
+                        android:text="未设置"
+                        android:textSize="12sp"
                         android:textColor="#FFFFFF"
                         android:gravity="center"/>
                 </GridLayout>
@@ -237,7 +284,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📋 发送日志"
+                    android:text="日志"
                     android:textSize="16sp"
                     android:textColor="#2E7D32"
                     android:textStyle="bold"
